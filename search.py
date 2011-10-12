@@ -64,6 +64,10 @@ if __name__ == '__main__':
     except ParamException, e:
         print 'Invalid parameters. %s' % e.args[0]
         sys.exit(1)
+    except searchlib.InvalidCategory, e:
+        print 'Invalid category %s. Valid ones are: %s' % (
+            e.args[0], val_cat_str)
+        sys.exit(1)
     if options.interact:
         code.interact(local = locals())
     sys.exit(v)

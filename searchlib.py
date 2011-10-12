@@ -32,6 +32,9 @@ VALID_NAME_ONLY = (
     'False', 
     )
 
+class InvalidCategory(Exception):
+    pass
+
 def _makeurl(url, keywords, category, name_only = 'False'):
     # just in case
     #
@@ -40,7 +43,7 @@ def _makeurl(url, keywords, category, name_only = 'False'):
         raise ValueError('invalid name only spec %r' % name_only)
 
     if category not in VALID_CATEGORIES:
-        raise ValueError('invalid category %s' % category)
+        raise InvalidCategory('invalid category %s' % category)
 
     data = {
         'keywords' : keywords, 
