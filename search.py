@@ -21,7 +21,9 @@ def display(result):
 class ParamException(Exception):
     pass
 
+LAST_RESULT = None
 def main(options, args):
+    global LAST_RESULT
     if len(args) == 0:
         raise ParamException('Keywords required!')
     result = searchlib.search_compendium( 
@@ -29,6 +31,7 @@ def main(options, args):
         category = options.category, 
         name_only = str(options.name_only), 
         )
+    LAST_RESULT = result # for access with -i option
     display(result)
     return 0
 
