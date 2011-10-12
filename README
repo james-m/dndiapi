@@ -1,0 +1,25 @@
+Python API for interfacing with the DnD Insider Compandium 
+web service. The compendium is an online resource for 
+DnD Insider subscribers to search the D&D 4e rules. 
+
+The web service itself is described in this blog post from
+many moons ago:
+
+http://community.wizards.com/wotc_frazier/blog/2009/08/20/dd_insider_compendium_api__part_2
+
+As this post suggests there are two pieces to the web service. The non-authenticated search
+portion hit at this url endpoint: 
+  
+  http://www.wizards.com/dndinsider/compendium/compendiumsearch.asmx
+
+The other piece is available only to dndinsider subscribers and requires authentication
+to proceed. These use the ids returned from searching the search service above to
+lookup detailed information on the display endpoint. For example:
+
+  http://www.wizards.com/dndinsider/compendium/display.aspx?page=monster&id=920
+
+The DNDIAPI uses the following python libraries:
+
+* mechanize - browser emulator
+* BeautilfulSoup - XML parsing
+
