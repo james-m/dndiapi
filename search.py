@@ -12,6 +12,7 @@ def display(result):
     from pprint import pprint
     pprint(result)
 
+
 class ParamException(Exception):
     pass
 

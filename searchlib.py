@@ -56,7 +56,7 @@ def _makeurl(url, keywords, category, name_only = 'False'):
 class HTTPError(Exception):
     pass
 
-def search_compendium(keywords, category, name_only='False', parse = False):
+def search_compendium(keywords, category, name_only='False', parse = True):
     '''Non-filters search
 
     keywords: a text string to search
@@ -118,9 +118,17 @@ def _soupdict(tag):
     turn attributes and the children into dictionary keys. 
 
     so for example:
+    
     <root attr_a="val_a">
         <child_b>val_cb</child_b>
         <child_c>val_cc</child_c>
     </root>
+    
+    will result in:
+    {'_type' : 'root', 
+     'attr_a'  : 'val_a', 
+     'child_b' : 'val_cb', 
+     'child_c' : 'val_cc', 
+     }
+
     '''
-    pass    
