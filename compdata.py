@@ -41,3 +41,14 @@ class CompendiumProxy(object):
         # We're not authenticated, so authenticate and then return the data
         response = self.browser.submit()
         return response.read()
+
+# Ok, parsing the returned HTML is going to SUUUUUUUUUUUUUUUCK
+# Here's some code that I played with that at least works with epicdestinies:
+# b = BeautifulSoup.BeautifulSoup(response)
+# detail = b.findAll('div', id='detail')
+# 
+# After that you have to parse through detail, which is mostly free-form html
+# and not really meant to be easily parseable.  What's worse, we'd likely have
+# to write a different parser for each of the different page types.
+#
+# LAME
