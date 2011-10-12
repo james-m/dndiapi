@@ -25,8 +25,9 @@ def parse_command_line():
             action='store_true',
             help='After running the query start the python interpreter.')
     parser.add_argument('-c', '--category', dest='category', default='Power',
-            choices=searchlib.VALID_CATEGORIES,
-            help='The category to keyward search in.  Default: %(default)s.')
+            choices=searchlib.VALID_CATEGORIES, metavar='category',
+            help='The category to keyward search in.  Choices: %(choices)s.  '
+                    'Default: %(default)s.')
     parser.add_argument('-n', '--nameonly', dest='name_only', default=False,
             action='store_true',
             help='Only return results whose names match the keywords you '
