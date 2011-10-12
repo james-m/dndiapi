@@ -100,7 +100,7 @@ def parse_full(xml):
     if not totals:
         raise ParseException('unable to find totals element')
     if not results:
-        raise ParseException('unable to find results elelemtn')
+        raise ParseException('unable to find results element')
 
     # totals
     #
