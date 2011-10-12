@@ -4,15 +4,9 @@ import os
 import sys
 import code 
 
-from optparse import OptionParser
+import argparse
 
 import searchlib
-
-USAGE = '''
-usage: %prog [options] <keyword search>
-
-Searches the D&D Insider Compandium for the keywords provided.
-'''
 
 def display(result):
     from pprint import pprint
@@ -21,56 +15,38 @@ def display(result):
 class ParamException(Exception):
     pass
 
+def parse_command_line():
+    """
+    Parses command line options and returns an argparse instance.
+    """
+    parser = argparse.ArgumentParser(description='Searches the D&D Insider '
+            'Compendium for the keywords provided.')
+    parser.add_argument('-i', '--interact', dest='interact', default=False,
+            action='store_true',
+            help='After running the query start the python interpreter.')
+    parser.add_argument('-c', '--category', dest='category', default='Power',
+            choices=searchlib.VALID_CATEGORIES,
+            help='The category to keyward search in.  Default: %(default)s.')
+    parser.add_argument('-n', '--nameonly', dest='name_only', default=False,
+            action='store_true',
+            help='Only return results whose names match the keywords you '
+                    'provide.')
+    parser.add_argument('keywords', nargs='+',
+            help='Keywords to search against the Compendium with.')
+    arg_manager = parser.parse_args()
+    return arg_manager
+
 LAST_RESULT = None
-def main(options, args):
+def main(arg_manager):
     global LAST_RESULT
-    if len(args) == 0:
-        raise ParamException('Keywords required!')
-    result = searchlib.search_compendium( 
-        keywords = args, 
-        category = options.category, 
-        name_only = str(options.name_only), 
-        )
-    LAST_RESULT = result # for access with -i option
+    result = searchlib.search_compendium(keywords=arg_manager.keywords,
+        category=arg_manager.category, name_only=str(arg_manager.name_only),)
     display(result)
-    return 0
+    LAST_RESULT = result
+    return True
 
 if __name__ == '__main__':
-    op = OptionParser(USAGE)
-    op.add_option(
-        '-i', '--interact', 
-        dest='interact', 
-        help='After running the query start the python interpreter',
-        action='store_true',
-        default=False, 
-        )
-    val_cat_str = ', '.join(searchlib.VALID_CATEGORIES)
-    op.add_option(
-        '-c', '--category', 
-        dest = 'category', 
-        help = 'The category to keyword search in.'
-        'Possible values incude ' + val_cat_str + '. '
-        '(default: Power)',
-        default = 'Power',
-        )
-    op.add_option(
-        '-n', '--nameonly',
-        dest = 'name_only', 
-        help = 'Search nameOnly True (default: False)',
-        action = 'store_true', 
-        default = False,
-        )
-    
-    options, args = op.parse_args()
-    try:
-        v = main(options, args)
-    except ParamException, e:
-        print 'Invalid parameters. %s' % e.args[0]
-        sys.exit(1)
-    except searchlib.InvalidCategory, e:
-        print 'Invalid category %s. Valid ones are: %s' % (
-            e.args[0], val_cat_str)
-        sys.exit(1)
-    if options.interact:
-        code.interact(local = locals())
-    sys.exit(v)
+    arg_manager = parse_command_line()
+    main(arg_manager)
+    if arg_manager.interact:
+        code.interact(local=locals())
