@@ -56,7 +56,7 @@ def _makeurl(url, keywords, category, name_only = 'False'):
 class HTTPError(Exception):
     pass
 
-def search_compendium(keywords, category, name_only='False', parse = True):
+def search_compendium(keywords, category, name_only='False'):
     '''Non-filters search
 
     keywords: a text string to search
@@ -67,18 +67,21 @@ def search_compendium(keywords, category, name_only='False', parse = True):
     raises:
         httplib2.HTTPError: when there's a problem.
     '''
-    # build the endpoint
+    result = _httpsearch(keywords, category, name_only)
+    return parse_full(result)
+
+def _httpsearch(keywords, category, name_only):
+     # build the endpoint
     #
     s_url = _makeurl(
         SRCH_URL, keywords, category = category, name_only = name_only)
 
     # fetch the page, brute force read for now
     #
+    # TODO: lots of error handling around making http requests
     result = urllib2.urlopen(s_url).read()
-    if parse:
-        return parse_full(result)
-    else:
-        return BeautifulSoup.BeautifulSOAP(result)
+    return result
+
 
 class ParseException(Exception):
     pass
@@ -87,8 +90,8 @@ def parse_full(xml):
     '''given the xml returned from a comp search, try an iterrupt 
     the returned data from a search query.
     '''
-    soup    = BeautifulSoup.BeautifulSOAP(xml)
-    data    = soup.find('data')
+    soup = BeautifulSoup.BeautifulSOAP(xml)
+    data = soup.find('data')
     if not data:
         raise ParseException('unable to find data element')
 
@@ -107,7 +110,20 @@ def parse_full(xml):
         count = int(tab.find('total').text)
         by_category[table_name] = count
 
-    return {'totals' : by_category}
+    # results. since we're not exactly sure what's coming back (other then
+    # inspecting the category the query was made with) lets just be better at
+    # handling stuff
+    #
+    result_rows = []
+    for child in results.childGenerator():
+        if not isinstance(child, BeautifulSoup.Tag):
+            continue
+        result_rows.append(_soupdict(child))
+
+    return {
+        'totals'  : by_category, 
+        'results' : result_rows, 
+        }
 
 def _soupdict(tag):
     '''given a beautifulsoup tag turn into a python dictionary. 
@@ -130,5 +146,14 @@ def _soupdict(tag):
      'child_b' : 'val_cb', 
      'child_c' : 'val_cc', 
      }
-
     '''
+    data = {
+        '_type' : tag.name, 
+        }
+    for name, value in tag.attrs:
+        try:
+            value = int(value)
+        except:
+            pass
+        data.update({name: value})
+    return data

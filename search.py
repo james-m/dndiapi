@@ -41,6 +41,7 @@ def parse_command_line():
 LAST_RESULT = None
 def main(arg_manager):
     global LAST_RESULT
+
     result = searchlib.search_compendium(keywords=arg_manager.keywords,
         category=arg_manager.category, name_only=str(arg_manager.name_only),)
     display(result)
