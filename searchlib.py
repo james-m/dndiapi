@@ -14,19 +14,32 @@ XSRCH_URL = urlparse.urljoin(BASE_URL, 'KeywordSearchWithFilters')
 # these are the valid entries for the "tab" GET parameter. not sure if it's
 # case-sensitive. Wouldn't be surprised if it is.
 #
+CATEGORY_RACE = 'Race' 
+CATEGORY_CLASS = 'Class' 
+CATEGORY_POWER = 'Power' 
+CATEGORY_FEAT = 'Feat' 
+CATEGORY_ITEM = 'Item' 
+CATEGORY_SKILL = 'Skill' 
+CATEGORY_RITUAL = 'Ritual' 
+CATEGORY_PARAGON_PATH = 'ParagonPath'
+CATEGORY_EPIC_DESTINY = 'EpicDestiny'
+CATEGORY_MONSTER = 'Monster'
+CATEGORY_DIETY = 'Deity'
+CATEGORY_GLOSSARY = 'Glossary'
 VALID_CATEGORIES = (
-    'Race', 
-    'Class', 
-    'Power', 
-    'Feat', 
-    'Item', 
-    'Skill', 
-    'Ritual', 
-    'ParagonPath', 
-    'EpicDestiny', 
-    'Monster', 
-    'Deity', 
-    'Glossary')
+    CATEGORY_RACE,
+    CATEGORY_CLASS,
+    CATEGORY_POWER,
+    CATEGORY_FEAT,
+    CATEGORY_ITEM,
+    CATEGORY_SKILL,
+    CATEGORY_RITUAL,
+    CATEGORY_PARAGON_PATH,
+    CATEGORY_EPIC_DESTINY,
+    CATEGORY_MONSTER,
+    CATEGORY_DIETY,
+    CATEGORY_GLOSSARY,
+    )
 VALID_NAME_ONLY = (
     'True', 
     'False', 
@@ -122,7 +135,7 @@ def parse_full(xml):
 
     return {
         'totals'  : by_category, 
-        'results' : result_rows, 
+        'rows' : result_rows, 
         }
 
 def _soupdict(tag):
@@ -152,6 +165,7 @@ def _soupdict(tag):
         }
     for name, value in tag.attrs:
         try:
+            value = value.strip()
             value = int(value)
         except:
             pass
